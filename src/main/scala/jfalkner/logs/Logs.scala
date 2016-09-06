@@ -26,6 +26,8 @@ trait Logs {
   def ls(path: Path, isdir: Boolean = false): Set[Path] =
     Files.newDirectoryStream(path).asScala.toList.filter(x => filter(x.toFile, isdir)).toSet
 
+  def lsdir(path: Path): Set[Path] = ls(path, true)
+
   def resolve(postfix: String, ts: Instant = Instant.now()) : Path = {
     val path = logsPath.resolve(s"$ts$postfix")
     if (path.toFile.exists()) resolve(postfix, ts.plusMillis(1)) else path
