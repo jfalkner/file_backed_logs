@@ -51,6 +51,20 @@ class LogsSpec extends Specification {
         Seq(pa, pb, pc, all).map(_.toFile.exists) mustEqual(Seq(false, false, false, true))
       }
     }
+    "logAll(Set)" in {
+      withCleanup{ logs =>
+        def l = logs.make[Foo]("set")
+        l.logAll(Set(a, b, c))
+        Set(a, b, c) mustEqual logs.load[Foo]("set")
+      }
+    }
+    "logAll(Seq)" in {
+      withCleanup{ logs =>
+        def l = logs.make[Foo]("seq")
+        l.logAll(Seq(a, b, c))
+        Seq(a, b, c) mustEqual logs.load[Foo]("seq")
+      }
+    }
   }
 
   def withCleanup(f: (Logs) => MatchResult[Any])  : MatchResult[Any] = {
