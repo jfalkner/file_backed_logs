@@ -1,6 +1,6 @@
 name := "file_backed_logs"
 
-version in ThisBuild := "0.0.2"
+version in ThisBuild := "0.0.3"
 
 organization in ThisBuild := "jfalkner"
 
@@ -27,8 +27,9 @@ libraryDependencies ++= Seq(
   "org.specs2" % "specs2_2.11" % "2.4.1-scalaz-7.0.6" % "test"
 )
 
-lazy val g = RootProject(uri("https://github.com/jfalkner/cc2csv.git#v0.0.4"))
-lazy val root = project in file(".") dependsOn g
+lazy val cc2csv = RootProject(uri("https://github.com/jfalkner/cc2csv.git#v0.0.4"))
+val root = project in file(".") dependsOn cc2csv
+
 
 // allow code coverage via - https://github.com/scoverage/sbt-scoverage
 //coverageEnabled := true

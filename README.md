@@ -15,8 +15,8 @@ that can be edited by hand or in programs such as Excel, if needed.
 Add the version tag of this repo directly in SBT.
 
 ```
-lazy val p = RootProject(uri("https://github.com/jfalkner/file_backed_logs.git#v0.0.1"))
-lazy val root = project in file(".") dependsOn p
+lazy val file_backed_logs = RootProject(uri("https://github.com/jfalkner/file_backed_logs.git#v0.0.3"))
+lazy val root = project in file(".") dependsOn file_backed_logs
 ```
 
 Use the `Logs` trait and make some custom logs based on a prefix.
