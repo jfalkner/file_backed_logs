@@ -33,8 +33,8 @@ trait Logs {
 
 
   // save multiple
-  def logAll(postfix: String, ts: Instant = Instant.now())(values: Seq[Product]) : Path =
-  Files.write(resolve(postfix, ts), values.map(marshall).mkString("\n").getBytes)
+  def logAll(postfix: String, ts: Instant = Instant.now())(values: Seq[Product]) : Option[Path] =
+    if (!values.isEmpty) Some(Files.write(resolve(postfix, ts), values.map(marshall).mkString("\n").getBytes)) else None
 
   // save single
   def log(postfix: String, ts: Instant = Instant.now())(value: Product) : Path =
@@ -42,7 +42,7 @@ trait Logs {
 
   // loads existing
   def load[T <: Product: ClassTag](postfix: String): Set[T] =
-  ls(logsPath).filter(_.toString.endsWith(postfix)).flatMap(f => Files.readAllLines(f).asScala.map(unmarshall[T]))
+    ls(logsPath).filter(_.toString.endsWith(postfix)).flatMap(f => Files.readAllLines(f).asScala.map(unmarshall[T]))
 
   // condense a bunch down to done log -- write all then delete
   def squash[T <: Product: ClassTag](postfix: String): Path = {
@@ -54,7 +54,7 @@ trait Logs {
   // postfix-specific logger
   class Logger[P <: Product: ClassTag](postfix: String) {
     def log(value: P): Path = Logs.this.log(postfix)(value)
-    def logAll(values: Seq[P]): Path = Logs.this.logAll(postfix)(values)
+    def logAll(values: Seq[P]): Option[Path] = Logs.this.logAll(postfix)(values)
     def load(): Set[P] = Logs.this.load[P](postfix)
     def squash(): Path = Logs.this.squash[P](postfix)
   }
