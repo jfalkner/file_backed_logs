@@ -11,20 +11,19 @@ import org.specs2.mutable.Specification
 class LogsSpec extends Specification {
 
   val (a, b, c) = (Foo("A"), Foo("B"), Foo("C"))
+  val suffix = ".example.csv"
 
   "Logs" should {
     "log and read single value" in {
       withCleanup{ logs =>
-        val prefix = "one"
-        def l = logs.make[Foo](prefix)
+        def l = logs.make[Foo](suffix)
         l.log(a)
         Set(a) mustEqual l.load
       }
     }
     "log and read multiple values" in {
       withCleanup{ logs =>
-        val prefix = "many"
-        def l = logs.make[Foo](prefix)
+        def l = logs.make[Foo](suffix)
         l.log(a)
         l.log(b)
         l.log(c)
@@ -33,21 +32,20 @@ class LogsSpec extends Specification {
     }
     "avoid overwriting existing log files" in {
       withCleanup{ logs =>
-        val prefix = "override"
         val ts = Instant.now()
-        logs.log(prefix, ts)(a)
-        logs.log(prefix, ts)(b)
-        logs.log(prefix, ts)(c)
-        Set(a, b, c) mustEqual logs.load[Foo](prefix)
+        logs.log(suffix, ts)(a)
+        logs.log(suffix, ts)(b)
+        logs.log(suffix, ts)(c)
+        Set(a, b, c) mustEqual logs.load[Foo](suffix)
       }
     }
     "squash multiple files down to one" in {
       withCleanup{ logs =>
-        val prefix = "squash"
-        def l = logs.make[Foo](prefix)
+        def l = logs.make[Foo](suffix)
         val (pa, pb, pc) = (l.log(a), l.log(b), l.log(c))
         val all = l.squash()
-        Set(a, b, c) mustEqual logs.load(prefix)
+        all.getFileName.toString mustEqual logs.aggregatePrefix + suffix
+        Set(a, b, c) mustEqual l.load()
         Seq(pa, pb, pc, all).map(_.toFile.exists) mustEqual(Seq(false, false, false, true))
       }
     }

@@ -17,7 +17,7 @@ trait Logs {
   lazy val ignoredDirs: Set[String] = Set()
 
   // what prefix the combined log file uses
-  val aggregatePostfix = "all"
+  val aggregatePrefix = "all"
 
   def make[P <: Product: ClassTag](postfix: String): Logger[P] = new Logger[P](postfix)
 
@@ -47,8 +47,8 @@ trait Logs {
 
   // condense a bunch down to done log -- write all then delete
   def squash[T <: Product: ClassTag](postfix: String): Path = {
-    val all = Files.write(resolve(aggregatePostfix), load[T](postfix).map(marshall).mkString("\n").getBytes)
-    ls(logsPath).filter(_.toString.endsWith(postfix)).filter(!_.startsWith("all")).foreach(Files.deleteIfExists)
+    val all = Files.write(logsPath.resolve(s"$aggregatePrefix$postfix"), load[T](postfix).map(marshall).mkString("\n").getBytes)
+    ls(logsPath).filter(_.toString.endsWith(postfix)).filter(!_.toString.endsWith(s"$aggregatePrefix$postfix")).foreach(Files.deleteIfExists)
     all
   }
 
