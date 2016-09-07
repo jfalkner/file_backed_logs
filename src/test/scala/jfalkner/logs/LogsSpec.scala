@@ -44,7 +44,7 @@ class LogsSpec extends Specification {
         def l = logs.make[Foo](suffix)
         val (pa, pb, pc) = (l.log(a), l.log(b), l.log(c))
         val all = l.squash()
-        all.getFileName.toString mustEqual logs.aggregatePrefix + suffix
+        all.getFileName.toString mustEqual s"all$suffix"
         Set(a, b, c) mustEqual l.load()
         Seq(pa, pb, pc, all).map(_.toFile.exists) mustEqual(Seq(false, false, false, true))
       }
