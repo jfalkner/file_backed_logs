@@ -63,6 +63,16 @@ class LogsSpec extends Specification {
         Seq(a, b, c) mustEqual logs.load[Foo]("seq")
       }
     }
+    "clear() removes old entries" in {
+      withCleanup{ logs =>
+        def l = logs.make[Foo]("clear")
+        l.logAll(Seq(a, b))
+        Seq(a, b) mustEqual l.load()
+        l.clear()
+        l.logAll(Seq(b, c))
+        Seq(b, c) mustEqual l.load()
+      }
+    }
   }
 
   def withCleanup(f: (Logs) => MatchResult[Any])  : MatchResult[Any] = {

@@ -55,6 +55,7 @@ trait Logs {
     def logAll(values: Traversable[P]): Option[Path] = Logs.this.logAll(postfix)(values)
     def load(): Set[P] = Logs.this.load[P](postfix)
     def squash(): Path = Logs.this.squash[P](postfix)
+    def clear(): Unit = Files.delete(squash)
   }
 
 }
