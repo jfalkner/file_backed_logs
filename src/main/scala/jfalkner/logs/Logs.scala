@@ -27,7 +27,7 @@ trait Logs {
 
   def resolve(postfix: String, ts: Instant = Instant.now()) : Path = {
     val path = logsPath.resolve(s"$ts$postfix")
-    if (path.toFile.exists()) resolve(postfix, ts.plusMillis(1)) else path
+    if (Files.exists(path)) resolve(postfix, ts.plusMillis(1)) else path
   }
 
   // save multiple
